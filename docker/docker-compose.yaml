@@ -1,0 +1,16 @@
+version: '3'
+
+services:
+  mongodb:
+    image: 'mongo'
+    container_name: 'my-mongo-container'
+    environment:
+      - MONGO_INITDB_DATABASE=prisma
+    volumes:
+      - ./mongo-volume:/data/db
+    ports:
+      - target: 27017
+        published: 27017
+        protocol: tcp
+        mode: host
+
