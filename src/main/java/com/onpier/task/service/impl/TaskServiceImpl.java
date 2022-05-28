@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
-import java.util.TimeZone;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,7 +61,7 @@ public class TaskServiceImpl implements TaskService {
 	}
 
 	@Override
-	public ResponseEntity<?> getBookBorrowedByDate(String date) throws ParseException {
+	public ResponseEntity<?> getUsersBorrowedBookByDate(String date) throws ParseException {
 		List<User> users = new ArrayList<>();
 		Date borrowedFrom = new SimpleDateFormat("yyyy-MM-dd").parse(date);
 		List<Borrowed> borrowedByDate = borrowRepository.findByBorrowedFrom(borrowedFrom);

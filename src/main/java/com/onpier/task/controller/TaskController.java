@@ -30,8 +30,8 @@ public class TaskController {
 	}
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/user_borrower_by_date")
-	public ResponseEntity<?> getBookBorrowedByDate(HttpServletRequest r, @RequestParam String date) throws ParseException {
-		return taskService.getBookBorrowedByDate(date);
+	public ResponseEntity<?> getUsersBorrowedBookByDate(HttpServletRequest r, @RequestParam String date) throws ParseException {
+		return taskService.getUsersBorrowedBookByDate(date);
 	}
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/available_books")
