@@ -5,6 +5,7 @@ import java.text.ParseException;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.bind.DefaultValue;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -30,8 +31,9 @@ public class TaskController {
 	}
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/user_borrower_by_date")
-	public ResponseEntity<?> getUsersBorrowedBookByDate(HttpServletRequest r, @RequestParam String date) throws ParseException {
-		return taskService.getUsersBorrowedBookByDate(date);
+	public ResponseEntity<?> getUsersBorrowedBookByDate(HttpServletRequest r, @RequestParam String date,
+														@RequestParam(defaultValue = "CET") String  timeZone) throws ParseException {
+		return taskService.getUsersBorrowedBookByDate(date, timeZone);
 	}
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/available_books")
@@ -42,8 +44,9 @@ public class TaskController {
 	@RequestMapping(method = RequestMethod.GET, value = "/books_by_user_by_dates")
 	public ResponseEntity<?> getBooksByUserByRangeOfDate(HttpServletRequest r, @RequestParam String user, 
 			@RequestParam String startDate, 
-			@RequestParam String endDate) throws ParseException {
-		return taskService.getBooksByUserByRangeOfDate(user, startDate, endDate);
+			@RequestParam String endDate,
+			@RequestParam(defaultValue = "CET") String  timeZone) throws ParseException {
+		return taskService.getBooksByUserByRangeOfDate(user, startDate, endDate, timeZone);
 	}
 
 }

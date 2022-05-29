@@ -10,10 +10,10 @@ public interface TaskService {
 
 	ResponseEntity<?> getInactiveUsers();
 
-	ResponseEntity<?> getUsersBorrowedBookByDate(String date) throws ParseException;
+	ResponseEntity<?> getUsersBorrowedBookByDate(String date, String timeZone) throws ParseException;
 
 	ResponseEntity<?> getAllAvailableBooks();
 
-	ResponseEntity<?> getBooksByUserByRangeOfDate(String user, String startDate, String endDate) throws ParseException;
+	ResponseEntity<?> getBooksByUserByRangeOfDate(String user, String startDate, String endDate, String timeZone) throws ParseException;
 
 }

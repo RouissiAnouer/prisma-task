@@ -2,10 +2,8 @@ package com.onpier.task.service.impl;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.time.ZoneId;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,9 +33,9 @@ public class TaskServiceImpl implements TaskService {
 		List<Borrowed> borrowedBooks = borrowRepository.findAll();
 		List<String> names = borrowedBooks.stream().map(Borrowed::getBorrower).distinct().collect(Collectors.toList());
 		names.forEach(n -> {
-			String[] splittedName = n.split(",");
-			String name = splittedName[0];
-			String firstName = splittedName[1];
+			String[] splitName = n.split(",");
+			String name = splitName[0];
+			String firstName = splitName[1];
 			Optional<User> userOpt = userRepository.findByNameAndFirstName(name, firstName);
 			if (userOpt.isPresent()) {
 				users.add(userOpt.get());
@@ -61,15 +59,18 @@ public class TaskServiceImpl implements TaskService {
 	}
 
 	@Override
-	public ResponseEntity<?> getUsersBorrowedBookByDate(String date) throws ParseException {
+	public ResponseEntity<?> getUsersBorrowedBookByDate(String date, String timeZone) throws ParseException {
 		List<User> users = new ArrayList<>();
-		Date borrowedFrom = new SimpleDateFormat("yyyy-MM-dd").parse(date);
-		List<Borrowed> borrowedByDate = borrowRepository.findByBorrowedFrom(borrowedFrom);
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		TimeZone tt = TimeZone.getTimeZone(ZoneId.of(timeZone));
+		sdf.setTimeZone(tt);
+		Date startDate = sdf.parse(date);
+		List<Borrowed> borrowedByDate = borrowRepository.findByBorrowedFrom(startDate);
 		List<String> names = borrowedByDate.stream().map(Borrowed::getBorrower).distinct().collect(Collectors.toList());
 		names.forEach(n -> {
-			String[] splittedName = n.split(",");
-			String name = splittedName[0];
-			String firstName = splittedName[1];
+			String[] splitName = n.split(",");
+			String name = splitName[0];
+			String firstName = splitName[1];
 			Optional<User> userOpt = userRepository.findByNameAndFirstName(name, firstName);
 			if (userOpt.isPresent()) {
 				users.add(userOpt.get());
@@ -87,9 +88,12 @@ public class TaskServiceImpl implements TaskService {
 	}
 
 	@Override
-	public ResponseEntity<?> getBooksByUserByRangeOfDate(String user, String startDate, String endDate) throws ParseException {
-		Date start = new SimpleDateFormat("yyyy-MM-dd").parse(startDate);
-		Date end = new SimpleDateFormat("yyyy-MM-dd").parse(endDate);
+	public ResponseEntity<?> getBooksByUserByRangeOfDate(String user, String startDate, String endDate, String timeZone) throws ParseException {
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		TimeZone tz = TimeZone.getTimeZone(ZoneId.of(timeZone));
+		sdf.setTimeZone(tz);
+		Date start = sdf.parse(startDate);
+		Date end = sdf.parse(endDate);
 		List<Borrowed> borrowedBooks = borrowRepository.findByBorrowerAndBorrowedFromAfterAndBorrowedToBefore(user, start, end);
 		List<String> names = borrowedBooks.stream().map(Borrowed::getBook).distinct().collect(Collectors.toList());
 		List<Books> books = booksRepository.findByTitleIn(names);
