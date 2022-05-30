@@ -28,7 +28,7 @@ public class TaskServiceImpl implements TaskService {
 	@Autowired BorrowRepository borrowRepository;
 	
 	@Override
-	public ResponseEntity<?> getActiveUsers() {
+	public ResponseEntity<UsersResponse> getActiveUsers() {
 		List<User> users = new ArrayList<>();
 		List<Borrowed> borrowedBooks = borrowRepository.findAll();
 		List<String> names = borrowedBooks.stream().map(Borrowed::getBorrower).distinct().collect(Collectors.toList());
@@ -45,7 +45,7 @@ public class TaskServiceImpl implements TaskService {
 	}
 
 	@Override
-	public ResponseEntity<?> getInactiveUsers() {
+	public ResponseEntity<UsersResponse> getInactiveUsers() {
 		List<User> users = userRepository.findAll();
 		List<User> inactiveUsers = new ArrayList<>();
 		users.forEach(u -> {

@@ -4,11 +4,13 @@ import java.text.ParseException;
 
 import org.springframework.http.ResponseEntity;
 
+import com.onpier.task.model.response.UsersResponse;
+
 public interface TaskService {
 
-	ResponseEntity<?> getActiveUsers();
+	ResponseEntity<UsersResponse> getActiveUsers();
 
-	ResponseEntity<?> getInactiveUsers();
+	ResponseEntity<UsersResponse> getInactiveUsers();
 
 	ResponseEntity<?> getUsersBorrowedBookByDate(String date, String timeZone) throws ParseException;
 
