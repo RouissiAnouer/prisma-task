@@ -29,8 +29,13 @@ public class TaskServiceImpl implements TaskService {
 	
 	@Override
 	public ResponseEntity<UsersResponse> getActiveUsers() {
-		List<User> users = new ArrayList<>();
 		List<Borrowed> borrowedBooks = borrowRepository.findAll();
+		List<User> users = getUsersBorrowedBook(borrowedBooks);
+		return ResponseEntity.ok(UsersResponse.builder().users(users).build());
+	}
+
+	private List<User> getUsersBorrowedBook(List<Borrowed> borrowedBooks) {
+		List<User> users = new ArrayList<>();
 		List<String> names = borrowedBooks.stream().map(Borrowed::getBorrower).distinct().collect(Collectors.toList());
 		names.forEach(n -> {
 			String[] splitName = n.split(",");
@@ -41,7 +46,7 @@ public class TaskServiceImpl implements TaskService {
 				users.add(userOpt.get());
 			}
 		});
-		return ResponseEntity.ok(UsersResponse.builder().users(users).build());
+		return users;
 	}
 
 	@Override
@@ -60,22 +65,12 @@ public class TaskServiceImpl implements TaskService {
 
 	@Override
 	public ResponseEntity<?> getUsersBorrowedBookByDate(String date, String timeZone) throws ParseException {
-		List<User> users = new ArrayList<>();
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		TimeZone tt = TimeZone.getTimeZone(ZoneId.of(timeZone));
 		sdf.setTimeZone(tt);
 		Date startDate = sdf.parse(date);
 		List<Borrowed> borrowedByDate = borrowRepository.findByBorrowedFrom(startDate);
-		List<String> names = borrowedByDate.stream().map(Borrowed::getBorrower).distinct().collect(Collectors.toList());
-		names.forEach(n -> {
-			String[] splitName = n.split(",");
-			String name = splitName[0];
-			String firstName = splitName[1];
-			Optional<User> userOpt = userRepository.findByNameAndFirstName(name, firstName);
-			if (userOpt.isPresent()) {
-				users.add(userOpt.get());
-			}
-		});
+		List<User> users = getUsersBorrowedBook(borrowedByDate);
 		return ResponseEntity.ok(UsersResponse.builder().users(users).build());
 	}
 
