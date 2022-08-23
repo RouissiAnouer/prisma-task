@@ -11,7 +11,7 @@ services:
     environment:
       - MONGO_INITDB_DATABASE=prisma
     volumes:
-      - ./mongo-volume:/data/db
+      - ./prisma-task/docker/mongo-volume:/data/db
     networks:
       - prisma-network
     ports:
@@ -31,13 +31,13 @@ services:
     networks:
       - prisma-network
   prisma-service:
-    build: ../
+    build: ./prisma-task/
     ports:
       - 8080:8080
     networks:
       - prisma-network
   history-service:
-    build: ../../apihistory/
+    build: ./apihistory/
     ports:
       - 8081:8081
     networks:
