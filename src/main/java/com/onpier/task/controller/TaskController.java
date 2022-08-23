@@ -1,11 +1,10 @@
 package com.onpier.task.controller;
 
-import java.text.ParseException;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.properties.bind.DefaultValue;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -14,6 +13,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.onpier.task.service.TaskService;
 
+import java.text.ParseException;
+
 @RestController
 @RequestMapping(value = "/api/v1")
 public class TaskController {
@@ -21,8 +22,9 @@ public class TaskController {
 	@Autowired TaskService taskService;
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/active_users")
-	public ResponseEntity<?> getActiveUsers(HttpServletRequest r) {
-		return taskService.getActiveUsers();
+	public ResponseEntity<?> getActiveUsers(HttpServletRequest r, @RequestParam(required = false, defaultValue = "0") int page,
+											@RequestParam(required = false, defaultValue = "10") int items) throws JsonProcessingException {
+		return taskService.getActiveUsers(page, items);
 	}
 
 	@RequestMapping(method = RequestMethod.GET, value = "/inactive_users")

@@ -25,7 +25,7 @@ class BooksLibraryApplicationTests {
 
 	@Test
 	void getActiveUsers() {
-		ResponseEntity<UsersResponse> users = taskUser.getActiveUsers();
+		ResponseEntity<UsersResponse> users = taskUser.getActiveUsers(0, 10);
 		//check if the response is not null
 		assertNotNull(users);
 		//check if the body of the ResponseEntity is not null

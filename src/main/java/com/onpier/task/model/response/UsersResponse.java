@@ -16,5 +16,11 @@ import lombok.NoArgsConstructor;
 public class UsersResponse {
 	
 	private List<User> users;
-
+	private Integer currentPage;
+	private Integer itemsPerPage;
+	private boolean nextPagePresent;
+	private Integer nextPage;
+	private Integer previousPage;
+	private Integer totalPages;
+	private Integer items;
 }

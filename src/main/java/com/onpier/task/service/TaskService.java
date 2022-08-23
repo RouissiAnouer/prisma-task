@@ -2,13 +2,14 @@ package com.onpier.task.service;
 
 import java.text.ParseException;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.http.ResponseEntity;
 
 import com.onpier.task.model.response.UsersResponse;
 
 public interface TaskService {
 
-	ResponseEntity<UsersResponse> getActiveUsers();
+	ResponseEntity<UsersResponse> getActiveUsers(int page, int items) throws JsonProcessingException;
 
 	ResponseEntity<UsersResponse> getInactiveUsers();
 

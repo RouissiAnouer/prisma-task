@@ -1,0 +1,13 @@
+app:
+  message: Message has been sent Successfully..
+spring:
+  rabbitmq:
+    host: rabbitmq
+    password: guest
+    port: 15672
+    username: guest
+    exchange: amq.direct
+    queue: prisma_queue
+    routingkey: prisma_routingkey
+server:
+  port: 8080

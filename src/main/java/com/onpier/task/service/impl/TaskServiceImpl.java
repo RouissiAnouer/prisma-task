@@ -6,7 +6,13 @@ import java.time.ZoneId;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.onpier.task.service.RabbitMqSender;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -26,12 +32,28 @@ public class TaskServiceImpl implements TaskService {
 	@Autowired UserRepository userRepository;
 	@Autowired BooksRepository booksRepository;
 	@Autowired BorrowRepository borrowRepository;
+
+	@Autowired
+	RabbitMqSender rabbitMqSender;
 	
 	@Override
-	public ResponseEntity<UsersResponse> getActiveUsers() {
-		List<Borrowed> borrowedBooks = borrowRepository.findAll();
-		List<User> users = getUsersBorrowedBook(borrowedBooks);
-		return ResponseEntity.ok(UsersResponse.builder().users(users).build());
+	public ResponseEntity<UsersResponse> getActiveUsers(int page, int items) throws JsonProcessingException {
+		//List<Borrowed> borrowedBooks = borrowRepository.findAll();
+		Pageable pageable = PageRequest.of(page, items);
+		Page<Borrowed> borrowedBooks = borrowRepository.findAll(pageable);
+		List<User> users = getUsersBorrowedBook(borrowedBooks.getContent());
+		ObjectMapper objectMapper = new ObjectMapper();
+		String json = objectMapper.writeValueAsString(users);
+		rabbitMqSender.send(json);
+		return ResponseEntity.ok(UsersResponse.builder().users(users)
+						.currentPage(page)
+						.nextPage(borrowedBooks.hasNext() ? page + 1:null)
+						.previousPage(borrowedBooks.hasPrevious() ? page - 1:null)
+						.nextPagePresent(borrowedBooks.hasNext())
+						.totalPages(borrowedBooks.getTotalPages() - 1)
+						.itemsPerPage(items)
+						.items(users.size())
+				.build());
 	}
 
 	private List<User> getUsersBorrowedBook(List<Borrowed> borrowedBooks) {
@@ -43,6 +65,10 @@ public class TaskServiceImpl implements TaskService {
 			String firstName = splitName[1];
 			Optional<User> userOpt = userRepository.findByNameAndFirstName(name, firstName);
 			if (userOpt.isPresent()) {
+				String pattern = "EEEEE MMMMM yyyy-MM-dd HH:mm";
+				SimpleDateFormat simpleDateFormat =new SimpleDateFormat(pattern, new Locale("en", "EN"));
+				String date = simpleDateFormat.format(userOpt.get().getMemberSince());
+				System.out.println(date);
 				users.add(userOpt.get());
 			}
 		});
@@ -52,6 +78,7 @@ public class TaskServiceImpl implements TaskService {
 	@Override
 	public ResponseEntity<UsersResponse> getInactiveUsers() {
 		List<User> users = userRepository.findAll();
+		rabbitMqSender.send("getInactiveUsers invoked");
 		List<User> inactiveUsers = new ArrayList<>();
 		users.forEach(u -> {
 			String borrower = u.getName().concat(",").concat(u.getFirstName());
@@ -66,6 +93,7 @@ public class TaskServiceImpl implements TaskService {
 	@Override
 	public ResponseEntity<?> getUsersBorrowedBookByDate(String date, String timeZone) throws ParseException {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		rabbitMqSender.send("getUsersBorrowedBookByDate invoked");
 		TimeZone tt = TimeZone.getTimeZone(ZoneId.of(timeZone));
 		sdf.setTimeZone(tt);
 		Date startDate = sdf.parse(date);
@@ -77,6 +105,7 @@ public class TaskServiceImpl implements TaskService {
 	@Override
 	public ResponseEntity<?> getAllAvailableBooks() {
 		List<Borrowed> borrowedBooks = borrowRepository.findAll();
+		rabbitMqSender.send("getAllAvailableBooks invoked");
 		List<String> bookTitles = borrowedBooks.stream().map(Borrowed::getBook).distinct().collect(Collectors.toList());
 		List<Books> books = booksRepository.findByTitleNotIn(bookTitles);
 		return ResponseEntity.ok(BookResponse.builder().books(books).build());
@@ -85,6 +114,7 @@ public class TaskServiceImpl implements TaskService {
 	@Override
 	public ResponseEntity<?> getBooksByUserByRangeOfDate(String user, String startDate, String endDate, String timeZone) throws ParseException {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		rabbitMqSender.send("getBooksByUserByRangeOfDate invoked");
 		TimeZone tz = TimeZone.getTimeZone(ZoneId.of(timeZone));
 		sdf.setTimeZone(tz);
 		Date start = sdf.parse(startDate);

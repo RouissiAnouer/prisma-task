@@ -19,11 +19,31 @@ services:
         published: 27017
         protocol: tcp
         mode: host
-
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: 'rabbitmq'
+    ports:
+        - 5672:5672
+        - 15672:15672
+    volumes:
+        - RabbitVM:/var/lib/rabbitmq/
+        - RabbitVMLG:/var/log/rabbitmq
+    networks:
+      - prisma-network
   prisma-service:
     build: ../
     ports:
       - 8080:8080
     networks:
       - prisma-network
+  history-service:
+    build: ../../apihistory/
+    ports:
+      - 8081:8081
+    networks:
+      - prisma-network
+
+volumes:
+  RabbitVM:
+  RabbitVMLG:
 
