@@ -15,7 +15,7 @@ public class RabbitMqSender {
     @Autowired
     private RabbitTemplate rabbitTemplate;
 
-    public void send(String message){
+    public void send(String message) {
         rabbitTemplate.convertAndSend(queueName, message);
     }
 }

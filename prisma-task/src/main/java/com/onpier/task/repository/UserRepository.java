@@ -9,7 +9,7 @@ import com.onpier.task.repository.document.User;
 
 @Repository
 public interface UserRepository extends MongoRepository<User, String> {
-	
-	Optional<User> findByNameAndFirstName(String name, String firstName);
+
+    Optional<User> findByNameAndFirstName(String name, String firstName);
 
 }

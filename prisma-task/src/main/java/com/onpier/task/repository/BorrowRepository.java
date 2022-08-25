@@ -10,13 +10,13 @@ import com.onpier.task.repository.document.Borrowed;
 
 @Repository
 public interface BorrowRepository extends MongoRepository<Borrowed, String> {
-	
-	List<Borrowed> findByBorrower(String name);
-	
-	List<Borrowed> findByBorrowedFrom(Date date);
-	
-	List<Borrowed> findByBookIn(List<String> titles);
-	
-	List<Borrowed> findByBorrowerAndBorrowedFromAfterAndBorrowedToBefore(String user, Date startDate, Date endDate);
- 
+
+    List<Borrowed> findByBorrower(String name);
+
+    List<Borrowed> findByBorrowedFrom(Date date);
+
+    List<Borrowed> findByBookIn(List<String> titles);
+
+    List<Borrowed> findByBorrowerAndBorrowedFromAfterAndBorrowedToBefore(String user, Date startDate, Date endDate);
+
 }

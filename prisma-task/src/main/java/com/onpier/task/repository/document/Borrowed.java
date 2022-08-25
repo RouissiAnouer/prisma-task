@@ -14,20 +14,20 @@ import lombok.experimental.SuperBuilder;
 @Data
 public class Borrowed implements Serializable {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 2134394251961071699L;
+    /**
+     *
+     */
+    private static final long serialVersionUID = 2134394251961071699L;
 
-	@Id
-	private String id;
-	
-	private String borrower;
+    @Id
+    private String id;
 
-	private String book;
+    private String borrower;
 
-	private Date borrowedFrom;
+    private String book;
 
-	private Date borrowedTo;
+    private Date borrowedFrom;
+
+    private Date borrowedTo;
 
 }

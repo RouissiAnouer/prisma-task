@@ -27,14 +27,17 @@ public class BeanInitializer {
     private String password;
     @Value("${spring.rabbitmq.host}")
     private String host;
+
     @Bean
     Queue queue() {
         return new Queue(queue, true);
     }
+
     @Bean
     Exchange myExchange() {
         return ExchangeBuilder.directExchange(exchange).durable(true).build();
     }
+
     @Bean
     Binding binding() {
         return BindingBuilder
@@ -43,6 +46,7 @@ public class BeanInitializer {
                 .with(routingKey)
                 .noargs();
     }
+
     @Bean
     public ConnectionFactory connectionFactory() {
         CachingConnectionFactory cachingConnectionFactory = new CachingConnectionFactory(host);
@@ -50,10 +54,12 @@ public class BeanInitializer {
         cachingConnectionFactory.setPassword(password);
         return cachingConnectionFactory;
     }
+
     @Bean
     public MessageConverter jsonMessageConverter() {
         return new Jackson2JsonMessageConverter();
     }
+
     @Bean
     public RabbitTemplate rabbitTemplate(ConnectionFactory connectionFactory) {
         final RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);

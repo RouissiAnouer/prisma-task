@@ -14,22 +14,22 @@ import lombok.experimental.SuperBuilder;
 @Data
 public class User implements Serializable {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 2134394251961071699L;
+    /**
+     *
+     */
+    private static final long serialVersionUID = 2134394251961071699L;
 
-	@Id
-	private String id;
-	
-	private String firstName;
+    @Id
+    private String id;
 
-	private String name;
+    private String firstName;
 
-	private Date memberSince;
+    private String name;
 
-	private Date memberTill;
+    private Date memberSince;
 
-	private String gender;
+    private Date memberTill;
+
+    private String gender;
 
 }

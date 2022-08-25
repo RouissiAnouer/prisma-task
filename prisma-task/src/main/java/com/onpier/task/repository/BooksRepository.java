@@ -9,9 +9,9 @@ import com.onpier.task.repository.document.Books;
 
 @Repository
 public interface BooksRepository extends MongoRepository<Books, String> {
-	
-	List<Books> findByTitleNotIn(List<String> titles);
-	
-	List<Books> findByTitleIn(List<String> titles);
+
+    List<Books> findByTitleNotIn(List<String> titles);
+
+    List<Books> findByTitleIn(List<String> titles);
 
 }

@@ -13,20 +13,20 @@ import lombok.experimental.SuperBuilder;
 @Data
 public class Books implements Serializable {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 2134394251961071699L;
+    /**
+     *
+     */
+    private static final long serialVersionUID = 2134394251961071699L;
 
-	@Id
-	private String id;
-	
-	private String title;
+    @Id
+    private String id;
 
-	private String author;
+    private String title;
 
-	private String genre;
+    private String author;
 
-	private String publisher;
+    private String genre;
+
+    private String publisher;
 
 }
