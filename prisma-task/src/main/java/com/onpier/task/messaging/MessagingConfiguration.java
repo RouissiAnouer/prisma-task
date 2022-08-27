@@ -44,6 +44,7 @@ public class MessagingConfiguration {
         return new Queue(queueName, true);
     }
 
+
     @Bean
     public List<Binding> binding() {
         return Arrays.asList(BindingBuilder.bind(queue()).to(exchange()).with(routingkey));
@@ -68,6 +69,8 @@ public class MessagingConfiguration {
         rabbitTemplate.setMessageConverter(jsonMessageConverter());
         return rabbitTemplate;
     }
+
+
 
 
 }

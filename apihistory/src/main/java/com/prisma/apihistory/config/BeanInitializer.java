@@ -15,7 +15,7 @@ import org.springframework.context.annotation.Configuration;
 @Slf4j
 public class BeanInitializer {
 
-    @Value("${spring.rabbitmq.queue}")
+    @Value("${spring.rabbitmq.onpierqueue}")
     private String queue;
     @Value("${spring.rabbitmq.exchange}")
     private String exchange;

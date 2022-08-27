@@ -2,7 +2,7 @@ app:
   message: Message has been sent Successfully..
 spring:
   rabbitmq:
-    host: rabbitmq
+    host: localhost
     password: guest
     port: 15672
     username: guest

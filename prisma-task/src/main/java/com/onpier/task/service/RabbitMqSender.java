@@ -16,6 +16,7 @@ public class RabbitMqSender {
     private RabbitTemplate rabbitTemplate;
 
     public void send(String message) {
+
         rabbitTemplate.convertAndSend(queueName, message);
     }
 }
