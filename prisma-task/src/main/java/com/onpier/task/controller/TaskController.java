@@ -29,18 +29,18 @@ public class TaskController {
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/inactive_users")
-    public ResponseEntity<?> getInactiveUsers(HttpServletRequest r) {
+    public ResponseEntity<?> getInactiveUsers(HttpServletRequest r) throws JsonProcessingException {
         return taskService.getInactiveUsers();
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/user_borrower_by_date")
     public ResponseEntity<?> getUsersBorrowedBookByDate(HttpServletRequest r, @RequestParam String date,
-                                                        @RequestParam(defaultValue = "CET") String timeZone) throws ParseException {
+                                                        @RequestParam(defaultValue = "CET") String timeZone) throws ParseException, JsonProcessingException {
         return taskService.getUsersBorrowedBookByDate(date, timeZone);
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/available_books")
-    public ResponseEntity<?> getAllAvailableBooks(HttpServletRequest r) {
+    public ResponseEntity<?> getAllAvailableBooks(HttpServletRequest r) throws JsonProcessingException {
         return taskService.getAllAvailableBooks();
     }
 
@@ -48,7 +48,7 @@ public class TaskController {
     public ResponseEntity<?> getBooksByUserByRangeOfDate(HttpServletRequest r, @RequestParam String user,
                                                          @RequestParam String startDate,
                                                          @RequestParam String endDate,
-                                                         @RequestParam(defaultValue = "CET") String timeZone) throws ParseException {
+                                                         @RequestParam(defaultValue = "CET") String timeZone) throws ParseException, JsonProcessingException {
         return taskService.getBooksByUserByRangeOfDate(user, startDate, endDate, timeZone);
     }
 

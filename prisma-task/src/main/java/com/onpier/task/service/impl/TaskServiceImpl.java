@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.onpier.task.messaging.MessageType;
 import com.onpier.task.service.RabbitMqSender;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -47,7 +48,7 @@ public class TaskServiceImpl implements TaskService {
         List<User> users = getUsersBorrowedBook(borrowedBooks.getContent());
         ObjectMapper objectMapper = new ObjectMapper();
         String json = objectMapper.writeValueAsString(users);
-        rabbitMqSender.send(json);
+        rabbitMqSender.send(json, MessageType.HIGH_ALERT);
         return ResponseEntity.ok(UsersResponse.builder().users(users)
                 .currentPage(page)
                 .nextPage(borrowedBooks.hasNext() ? page + 1 : null)
@@ -79,9 +80,11 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public ResponseEntity<UsersResponse> getInactiveUsers() {
+    public ResponseEntity<UsersResponse> getInactiveUsers() throws JsonProcessingException {
         List<User> users = userRepository.findAll();
-        rabbitMqSender.send("getInactiveUsers invoked");
+        ObjectMapper objectMapper = new ObjectMapper();
+        String json = objectMapper.writeValueAsString(users);
+        rabbitMqSender.send(json, MessageType.LOW_ALERT);
         List<User> inactiveUsers = new ArrayList<>();
         users.forEach(u -> {
             String borrower = u.getName().concat(",").concat(u.getFirstName());
@@ -94,30 +97,33 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public ResponseEntity<?> getUsersBorrowedBookByDate(String date, String timeZone) throws ParseException {
+    public ResponseEntity<?> getUsersBorrowedBookByDate(String date, String timeZone) throws ParseException, JsonProcessingException {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        rabbitMqSender.send("getUsersBorrowedBookByDate invoked");
         TimeZone tt = TimeZone.getTimeZone(ZoneId.of(timeZone));
         sdf.setTimeZone(tt);
         Date startDate = sdf.parse(date);
         List<Borrowed> borrowedByDate = borrowRepository.findByBorrowedFrom(startDate);
         List<User> users = getUsersBorrowedBook(borrowedByDate);
+        ObjectMapper objectMapper = new ObjectMapper();
+        String json = objectMapper.writeValueAsString(users);
+        rabbitMqSender.send(json, MessageType.NORMAL_ALERT);
         return ResponseEntity.ok(UsersResponse.builder().users(users).build());
     }
 
     @Override
-    public ResponseEntity<?> getAllAvailableBooks() {
+    public ResponseEntity<?> getAllAvailableBooks() throws JsonProcessingException {
         List<Borrowed> borrowedBooks = borrowRepository.findAll();
-        rabbitMqSender.send("getAllAvailableBooks invoked");
         List<String> bookTitles = borrowedBooks.stream().map(Borrowed::getBook).distinct().collect(Collectors.toList());
         List<Books> books = booksRepository.findByTitleNotIn(bookTitles);
+        ObjectMapper objectMapper = new ObjectMapper();
+        String json = objectMapper.writeValueAsString(books);
+        rabbitMqSender.send(json, MessageType.HIGH_ALERT);
         return ResponseEntity.ok(BookResponse.builder().books(books).build());
     }
 
     @Override
-    public ResponseEntity<?> getBooksByUserByRangeOfDate(String user, String startDate, String endDate, String timeZone) throws ParseException {
+    public ResponseEntity<?> getBooksByUserByRangeOfDate(String user, String startDate, String endDate, String timeZone) throws ParseException, JsonProcessingException {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        rabbitMqSender.send("getBooksByUserByRangeOfDate invoked");
         TimeZone tz = TimeZone.getTimeZone(ZoneId.of(timeZone));
         sdf.setTimeZone(tz);
         Date start = sdf.parse(startDate);
@@ -125,6 +131,9 @@ public class TaskServiceImpl implements TaskService {
         List<Borrowed> borrowedBooks = borrowRepository.findByBorrowerAndBorrowedFromAfterAndBorrowedToBefore(user, start, end);
         List<String> names = borrowedBooks.stream().map(Borrowed::getBook).distinct().collect(Collectors.toList());
         List<Books> books = booksRepository.findByTitleIn(names);
+        ObjectMapper objectMapper = new ObjectMapper();
+        String json = objectMapper.writeValueAsString(books);
+        rabbitMqSender.send(json, MessageType.HIGH_ALERT);
         return ResponseEntity.ok(BookResponse.builder().books(books).build());
     }
 

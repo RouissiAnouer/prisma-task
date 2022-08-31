@@ -11,12 +11,12 @@ public interface TaskService {
 
     ResponseEntity<UsersResponse> getActiveUsers(int page, int items) throws JsonProcessingException;
 
-    ResponseEntity<UsersResponse> getInactiveUsers();
+    ResponseEntity<UsersResponse> getInactiveUsers() throws JsonProcessingException;
 
-    ResponseEntity<?> getUsersBorrowedBookByDate(String date, String timeZone) throws ParseException;
+    ResponseEntity<?> getUsersBorrowedBookByDate(String date, String timeZone) throws ParseException, JsonProcessingException;
 
-    ResponseEntity<?> getAllAvailableBooks();
+    ResponseEntity<?> getAllAvailableBooks() throws JsonProcessingException;
 
-    ResponseEntity<?> getBooksByUserByRangeOfDate(String user, String startDate, String endDate, String timeZone) throws ParseException;
+    ResponseEntity<?> getBooksByUserByRangeOfDate(String user, String startDate, String endDate, String timeZone) throws ParseException, JsonProcessingException;
 
 }
